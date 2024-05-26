@@ -13,6 +13,14 @@ jobs:
         with:
           persist-credentials: false 
           submodules: true
+          
+      - name: Verify GITHUB_TOKEN Permissions
+        run: |
+          echo "Checking GITHUB_TOKEN permissions..."
+          git branch -a
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          gh auth status
+          gh repo view ${GITHUB_REPOSITORY} --json viewerPermission  
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
