@@ -218,7 +218,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Set the container's height to 100vh */
+     /* Set the container's height to 100vh */
     padding: 1rem;
     box-sizing: border-box;
 }

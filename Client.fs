@@ -120,14 +120,11 @@ module Pages =
             let newPrice = price * trendFactor
             newPrice
 
-        let initialStockData = [
-            { Name = "Apple"; Amount = 1.1; Price = 189.0; LastPrice = shufflePrice 189.0 }
-            { Name = "Alphabet"; Amount = 1.1; Price = 170.0; LastPrice = shufflePrice 170.0 }
-            { Name = "Microsoft"; Amount = 1.3; Price = 416.0; LastPrice = shufflePrice 416.0 }
-        ]
+        let initialStockData = []      
+        
 
         let loadStockData () =
-            match JS.Window.LocalStorage.GetItem("stocks") with
+            match JS.Window.LocalStorage.GetItem("") with
             | null -> initialStockData
             | data ->
                 try
@@ -146,14 +143,11 @@ module Pages =
             model.View |> View.Sink (fun stocks -> saveStockData (List.ofSeq stocks))
             model
 
-        let capitalize (str: string) =
-            if String.IsNullOrWhiteSpace(str) then str
-            else str.[0].ToString().ToUpper() + str.Substring(1).ToLower()
 
         let priceupdate() =
             stockModel.Iter(fun stock ->
                 let newLastPrice = shufflePrice stock.Price
-                stockModel.UpdateBy (fun s -> if s.Name = stock.Name then Some { s with LastPrice = newLastPrice } else None) stock.Name
+                stockModel.UpdateBy (fun p-> if p.Name = stock.Name then Some { p with LastPrice = newLastPrice } else None) stock.Name
             )
 
         let UpdateLatestPrices () =
@@ -179,7 +173,7 @@ module Pages =
                 let addNewStock (stockN: Var<string>, stockA: Var<float>, stockP: Var<float>) =
                     if not <| String.IsNullOrWhiteSpace(stockN.Value) && stockA.Value > 0.0 && stockP.Value > 0.0 then
                         let newStock = {
-                            Name = capitalize stockN.Value
+                            Name = stockN.Value
                             Amount = stockA.Value
                             Price = stockP.Value
                             LastPrice = shufflePrice stockP.Value
@@ -227,8 +221,13 @@ module Pages =
                         .add(fun _ -> addNewStock (stockN, stockA, stockP))
                         .Doc()
 
- [<JavaScript>]
-                
+[<JavaScript>]
+module Utils =
+    let clearLocalStorage () =
+        JS.Window.LocalStorage.Clear()
+        Console.Log("Local storage cleared")
+
+[<JavaScript>]                
 module App =
     open WebSharper.UI.Notation
 

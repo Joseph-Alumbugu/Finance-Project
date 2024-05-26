@@ -154,7 +154,7 @@ function CounterPage(){
     const stockA_1=stockA();
     const stockP_1=stockP();
     if(!IsNullOrWhiteSpace(stockN_1.Get())&&stockA_1.Get()>0&&stockP_1.Get()>0){
-      const newStock=New_1(capitalize(stockN_1.Get()), stockA_1.Get(), stockP_1.Get(), shufflePrice(stockP_1.Get()));
+      const newStock=New_1(stockN_1.Get(), stockA_1.Get(), stockP_1.Get(), shufflePrice(stockP_1.Get()));
       stockModel().Append(newStock);
       stockN_1.Set("");
       stockA_1.Set(0);
@@ -185,10 +185,6 @@ function stockA(){
 function stockN(){
   return _c_8.stockN;
 }
-function capitalize(str){
-  let c;
-  return IsNullOrWhiteSpace(str)?str:(c=str[0],String(c)).toUpperCase()+str.substring(1).toLowerCase();
-}
 function shufflePrice(price){
   return price*(1+((random(),Math.random())-0.5)*0.2);
 }
@@ -197,7 +193,7 @@ function saveStockData(stocks){
   globalThis.localStorage.setItem("stocks", data);
 }
 function loadStockData(){
-  const m=globalThis.localStorage.getItem("stocks");
+  const m=globalThis.localStorage.getItem("");
   if(m==null)return initialStockData();
   else try {
     return map_1((stock) => New_1(stock.Name, stock.Amount, stock.Price, shufflePrice(stock.Price)), ((DecodeList(Id()))())(JSON.parse(m)));
@@ -209,7 +205,7 @@ function loadStockData(){
 function priceupdate(){
   stockModel().Iter((stock) => {
     const newLastPrice=shufflePrice(stock.Price);
-    stockModel().UpdateBy((s) => s.Name==stock.Name?Some(New_1(s.Name, s.Amount, s.Price, newLastPrice)):null, stock.Name);
+    stockModel().UpdateBy((p) => p.Name==stock.Name?Some(New_1(p.Name, p.Amount, p.Price, newLastPrice)):null, stock.Name);
   });
 }
 function random(){
@@ -548,7 +544,7 @@ let _c_8=Lazy((_i) => class $StartupCode_Client {
     this.stockN=_1[0];
     this.stockA=_1[1];
     this.random=new _c_12();
-    this.initialStockData=ofArray([New_1("Apple", 1.1, 189, shufflePrice(189)), New_1("Alphabet", 1.1, 170, shufflePrice(170)), New_1("Microsoft", 1.3, 416, shufflePrice(416))]);
+    this.initialStockData=_c_11.Empty;
     const model=Create((stock) => stock.Name, loadStockData());
     let _2=(Sink((stocks) => {
       saveStockData(ofSeq(stocks));
@@ -1216,10 +1212,11 @@ let _c_13=Lazy((_i) => class Var extends _c {
   }
   static { }
 });
-function ofArray(arr){
-  let r=_c_11.Empty;
-  for(let i=length(arr)-1, _1=0;i>=_1;i--)r=_c_11.Cons(get(arr, i), r);
-  return r;
+function Create(key, init_3){
+  return CreateWithStorage(key, InMemory(ofSeq_1(init_3)));
+}
+function CreateWithStorage(key, storage){
+  return new _c_9("New", key, storage);
 }
 function ofSeq(s){
   if(s instanceof _c_11)return s;
@@ -1250,6 +1247,11 @@ function ofSeq(s){
       if(typeof e=="object"&&isIDisposable(e))e.Dispose();
     }
   }
+}
+function ofArray(arr){
+  let r=_c_11.Empty;
+  for(let i=length(arr)-1, _1=0;i>=_1;i--)r=_c_11.Cons(get(arr, i), r);
+  return r;
 }
 function map_1(f, x){
   let r;
@@ -1329,12 +1331,6 @@ function tail(l){
 }
 function listEmpty(){
   return FailWith("The input list was empty.");
-}
-function Create(key, init_3){
-  return CreateWithStorage(key, InMemory(ofSeq_1(init_3)));
-}
-function CreateWithStorage(key, storage){
-  return new _c_9("New", key, storage);
 }
 function InstallHash(onParseError, router_1){
   const var_1=_c_13.Create_1(void 0);
