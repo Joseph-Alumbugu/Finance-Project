@@ -24,7 +24,7 @@ jobs:
           dotnet nuget add source https://nuget.pkg.github.com/dotnet-websharper/index.json \
             --name github \
             --username Joseph-Alumbugu \
-            --password "${{ secrets.wEBSHARPER }}" \
+            --password "${{ secrets.WEBSHARPER }}" \
             --store-password-in-clear-text
 
       - run: npm install -g vite
